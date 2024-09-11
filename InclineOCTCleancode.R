@@ -1,0 +1,550 @@
+library(tidyverse)
+library(stringr)
+library(readr)
+library(fs)
+library(dplyr)
+library(tidyr)
+
+
+rm(list = ls())
+graphics.off()
+
+pth = choose.dir(default="", caption = "Select location of files")    # Prompt to select the folder of OCT CSV files to read 
+filenames = list.files(path = pth, pattern = ".csv",full.names=TRUE)
+
+
+newdf = data.frame()
+df_na = data.frame()
+df_old = data.frame()
+cleanData = data.frame()
+
+data <- purrr::map_df(filenames, read.csv, .id = 'generation', header=FALSE)
+
+df_old = data
+
+#Deleating first column
+df_old <- df_old[, -1]
+
+#Removing unwanted rows
+df_old <- df_old[-1:-3, ]
+rownames(df_old) <- NULL
+
+
+newdf = df_old  %>%
+  rename(IsMeasurementRunning = V7,
+         MeanCoatingThickeness1 = V24,
+         MeanCoatingVariability1 = V26,
+         MeanHomogeneity1 = V28,
+         MeanSurfaceRoughness1 = V30,
+         MeanCoatingThickness_outlierRemoved_ = V45,
+         CoatingThicknessPosition_1 = V76,
+         MeanCoatingThickeness2 = V284,
+         Timestamp = V1,
+         MeanCoatingVariability2 = V286,
+         MeanHomogeneity2 = V287,
+         MeanSurfaceRoughness2 = V288,
+         MeanLast300SamplesThickness = V296,
+         StdLast300SamplesThickness = V897,
+         Last300ThicknessSample_1	= V297,
+         Last300ThicknessSample_2	= V298,
+         Last300ThicknessSample_3	= V299,
+         Last300ThicknessSample_4	= V300,
+         Last300ThicknessSample_5	= V301,
+         Last300ThicknessSample_6	= V302,
+         Last300ThicknessSample_7	= V303,
+         Last300ThicknessSample_8	= V304,
+         Last300ThicknessSample_9	= V305,
+         Last300ThicknessSample_10	= V306,
+         Last300ThicknessSample_11	= V307,
+         Last300ThicknessSample_12	= V308,
+         Last300ThicknessSample_13	= V309,
+         Last300ThicknessSample_14	= V310,
+         Last300ThicknessSample_15	= V311,
+         Last300ThicknessSample_16	= V312,
+         Last300ThicknessSample_17	= V313,
+         Last300ThicknessSample_18	= V314,
+         Last300ThicknessSample_19	= V315,
+         Last300ThicknessSample_20	= V316,
+         Last300ThicknessSample_21	= V317,
+         Last300ThicknessSample_22	= V318,
+         Last300ThicknessSample_23	= V319,
+         Last300ThicknessSample_24	= V320,
+         Last300ThicknessSample_25	= V321,
+         Last300ThicknessSample_26	= V322,
+         Last300ThicknessSample_27	= V323,
+         Last300ThicknessSample_28	= V324,
+         Last300ThicknessSample_29	= V325,
+         Last300ThicknessSample_30	= V326,
+         Last300ThicknessSample_31	= V327,
+         Last300ThicknessSample_32	= V328,
+         Last300ThicknessSample_33	= V329,
+         Last300ThicknessSample_34	= V330,
+         Last300ThicknessSample_35	= V331,
+         Last300ThicknessSample_36	= V332,
+         Last300ThicknessSample_37	= V333,
+         Last300ThicknessSample_38	= V334,
+         Last300ThicknessSample_39	= V335,
+         Last300ThicknessSample_40	= V336,
+         Last300ThicknessSample_41	= V337,
+         Last300ThicknessSample_42	= V338,
+         Last300ThicknessSample_43	= V339,
+         Last300ThicknessSample_44	= V340,
+         Last300ThicknessSample_45	= V341,
+         Last300ThicknessSample_46	= V342,
+         Last300ThicknessSample_47	= V343,
+         Last300ThicknessSample_48	= V344,
+         Last300ThicknessSample_49	= V345,
+         Last300ThicknessSample_50	= V346,
+         Last300ThicknessSample_51	= V347,
+         Last300ThicknessSample_52	= V348,
+         Last300ThicknessSample_53	= V349,
+         Last300ThicknessSample_54	= V350,
+         Last300ThicknessSample_55	= V351,
+         Last300ThicknessSample_56	= V352,
+         Last300ThicknessSample_57	= V353,
+         Last300ThicknessSample_58	= V354,
+         Last300ThicknessSample_59	= V355,
+         Last300ThicknessSample_60	= V356,
+         Last300ThicknessSample_61	= V357,
+         Last300ThicknessSample_62	= V358,
+         Last300ThicknessSample_63	= V359,
+         Last300ThicknessSample_64	= V360,
+         Last300ThicknessSample_65	= V361,
+         Last300ThicknessSample_66	= V362,
+         Last300ThicknessSample_67	= V363,
+         Last300ThicknessSample_68	= V364,
+         Last300ThicknessSample_69	= V365,
+         Last300ThicknessSample_70	= V366,
+         Last300ThicknessSample_71	= V367,
+         Last300ThicknessSample_72	= V368,
+         Last300ThicknessSample_73	= V369,
+         Last300ThicknessSample_74	= V370,
+         Last300ThicknessSample_75	= V371,
+         Last300ThicknessSample_76	= V372,
+         Last300ThicknessSample_77	= V373,
+         Last300ThicknessSample_78	= V374,
+         Last300ThicknessSample_79	= V375,
+         Last300ThicknessSample_80	= V376,
+         Last300ThicknessSample_81	= V377,
+         Last300ThicknessSample_82	= V378,
+         Last300ThicknessSample_83	= V379,
+         Last300ThicknessSample_84	= V380,
+         Last300ThicknessSample_85	= V381,
+         Last300ThicknessSample_86	= V382,
+         Last300ThicknessSample_87	= V383,
+         Last300ThicknessSample_88	= V384,
+         Last300ThicknessSample_89	= V385,
+         Last300ThicknessSample_90	= V386,
+         Last300ThicknessSample_91	= V387,
+         Last300ThicknessSample_92	= V388,
+         Last300ThicknessSample_93	= V389,
+         Last300ThicknessSample_94	= V390,
+         Last300ThicknessSample_95	= V391,
+         Last300ThicknessSample_96	= V392,
+         Last300ThicknessSample_97	= V393,
+         Last300ThicknessSample_98	= V394,
+         Last300ThicknessSample_99	= V395,
+         Last300ThicknessSample_100	= V396,
+         Last300ThicknessSample_101	= V397,
+         Last300ThicknessSample_102	= V398,
+         Last300ThicknessSample_103	= V399,
+         Last300ThicknessSample_104	= V400,
+         Last300ThicknessSample_105	= V401,
+         Last300ThicknessSample_106	= V402,
+         Last300ThicknessSample_107	= V403,
+         Last300ThicknessSample_108	= V404,
+         Last300ThicknessSample_109	= V405,
+         Last300ThicknessSample_110	= V406,
+         Last300ThicknessSample_111	= V407,
+         Last300ThicknessSample_112	= V408,
+         Last300ThicknessSample_113	= V409,
+         Last300ThicknessSample_114	= V410,
+         Last300ThicknessSample_115	= V411,
+         Last300ThicknessSample_116	= V412,
+         Last300ThicknessSample_117	= V413,
+         Last300ThicknessSample_118	= V414,
+         Last300ThicknessSample_119	= V415,
+         Last300ThicknessSample_120	= V416,
+         Last300ThicknessSample_121	= V417,
+         Last300ThicknessSample_122	= V418,
+         Last300ThicknessSample_123	= V419,
+         Last300ThicknessSample_124	= V420,
+         Last300ThicknessSample_125	= V421,
+         Last300ThicknessSample_126	= V422,
+         Last300ThicknessSample_127	= V423,
+         Last300ThicknessSample_128	= V424,
+         Last300ThicknessSample_129	= V425,
+         Last300ThicknessSample_130	= V426,
+         Last300ThicknessSample_131	= V427,
+         Last300ThicknessSample_132	= V428,
+         Last300ThicknessSample_133	= V429,
+         Last300ThicknessSample_134	= V430,
+         Last300ThicknessSample_135	= V431,
+         Last300ThicknessSample_136	= V432,
+         Last300ThicknessSample_137	= V433,
+         Last300ThicknessSample_138	= V434,
+         Last300ThicknessSample_139	= V435,
+         Last300ThicknessSample_140	= V436,
+         Last300ThicknessSample_141	= V437,
+         Last300ThicknessSample_142	= V438,
+         Last300ThicknessSample_143	= V439,
+         Last300ThicknessSample_144	= V440,
+         Last300ThicknessSample_145	= V441,
+         Last300ThicknessSample_146	= V442,
+         Last300ThicknessSample_147	= V443,
+         Last300ThicknessSample_148	= V444,
+         Last300ThicknessSample_149	= V445,
+         Last300ThicknessSample_150	= V446,
+         Last300ThicknessSample_151	= V447,
+         Last300ThicknessSample_152	= V448,
+         Last300ThicknessSample_153	= V449,
+         Last300ThicknessSample_154	= V450,
+         Last300ThicknessSample_155	= V451,
+         Last300ThicknessSample_156	= V452,
+         Last300ThicknessSample_157	= V453,
+         Last300ThicknessSample_158	= V454,
+         Last300ThicknessSample_159	= V455,
+         Last300ThicknessSample_160	= V456,
+         Last300ThicknessSample_161	= V457,
+         Last300ThicknessSample_162	= V458,
+         Last300ThicknessSample_163	= V459,
+         Last300ThicknessSample_164	= V460,
+         Last300ThicknessSample_165	= V461,
+         Last300ThicknessSample_166	= V462,
+         Last300ThicknessSample_167	= V463,
+         Last300ThicknessSample_168	= V464,
+         Last300ThicknessSample_169	= V465,
+         Last300ThicknessSample_170	= V466,
+         Last300ThicknessSample_171	= V467,
+         Last300ThicknessSample_172	= V468,
+         Last300ThicknessSample_173	= V469,
+         Last300ThicknessSample_174	= V470,
+         Last300ThicknessSample_175	= V471,
+         Last300ThicknessSample_176	= V472,
+         Last300ThicknessSample_177	= V473,
+         Last300ThicknessSample_178	= V474,
+         Last300ThicknessSample_179	= V475,
+         Last300ThicknessSample_180	= V476,
+         Last300ThicknessSample_181	= V477,
+         Last300ThicknessSample_182	= V478,
+         Last300ThicknessSample_183	= V479,
+         Last300ThicknessSample_184	= V480,
+         Last300ThicknessSample_185	= V481,
+         Last300ThicknessSample_186	= V482,
+         Last300ThicknessSample_187	= V483,
+         Last300ThicknessSample_188	= V484,
+         Last300ThicknessSample_189	= V485,
+         Last300ThicknessSample_190	= V486,
+         Last300ThicknessSample_191	= V487,
+         Last300ThicknessSample_192	= V488,
+         Last300ThicknessSample_193	= V489,
+         Last300ThicknessSample_194	= V490,
+         Last300ThicknessSample_195	= V491,
+         Last300ThicknessSample_196	= V492,
+         Last300ThicknessSample_197	= V493,
+         Last300ThicknessSample_198	= V494,
+         Last300ThicknessSample_199	= V495,
+         Last300ThicknessSample_200	= V496,
+         Last300ThicknessSample_201	= V497,
+         Last300ThicknessSample_202	= V498,
+         Last300ThicknessSample_203	= V499,
+         Last300ThicknessSample_204	= V500,
+         Last300ThicknessSample_205	= V501,
+         Last300ThicknessSample_206	= V502,
+         Last300ThicknessSample_207	= V503,
+         Last300ThicknessSample_208	= V504,
+         Last300ThicknessSample_209	= V505,
+         Last300ThicknessSample_210	= V506,
+         Last300ThicknessSample_211	= V507,
+         Last300ThicknessSample_212	= V508,
+         Last300ThicknessSample_213	= V509,
+         Last300ThicknessSample_214	= V510,
+         Last300ThicknessSample_215	= V511,
+         Last300ThicknessSample_216	= V512,
+         Last300ThicknessSample_217	= V513,
+         Last300ThicknessSample_218	= V514,
+         Last300ThicknessSample_219	= V515,
+         Last300ThicknessSample_220	= V516,
+         Last300ThicknessSample_221	= V517,
+         Last300ThicknessSample_222	= V518,
+         Last300ThicknessSample_223	= V519,
+         Last300ThicknessSample_224	= V520,
+         Last300ThicknessSample_225	= V521,
+         Last300ThicknessSample_226	= V522,
+         Last300ThicknessSample_227	= V523,
+         Last300ThicknessSample_228	= V524,
+         Last300ThicknessSample_229	= V525,
+         Last300ThicknessSample_230	= V526,
+         Last300ThicknessSample_231	= V527,
+         Last300ThicknessSample_232	= V528,
+         Last300ThicknessSample_233	= V529,
+         Last300ThicknessSample_234	= V530,
+         Last300ThicknessSample_235	= V531,
+         Last300ThicknessSample_236	= V532,
+         Last300ThicknessSample_237	= V533,
+         Last300ThicknessSample_238	= V534,
+         Last300ThicknessSample_239	= V535,
+         Last300ThicknessSample_240	= V536,
+         Last300ThicknessSample_241	= V537,
+         Last300ThicknessSample_242	= V538,
+         Last300ThicknessSample_243	= V539,
+         Last300ThicknessSample_244	= V540,
+         Last300ThicknessSample_245	= V541,
+         Last300ThicknessSample_246	= V542,
+         Last300ThicknessSample_247	= V543,
+         Last300ThicknessSample_248	= V544,
+         Last300ThicknessSample_249	= V545,
+         Last300ThicknessSample_250	= V546,
+         Last300ThicknessSample_251	= V547,
+         Last300ThicknessSample_252	= V548,
+         Last300ThicknessSample_253	= V549,
+         Last300ThicknessSample_254	= V550,
+         Last300ThicknessSample_255	= V551,
+         Last300ThicknessSample_256	= V552,
+         Last300ThicknessSample_257	= V553,
+         Last300ThicknessSample_258	= V554,
+         Last300ThicknessSample_259	= V555,
+         Last300ThicknessSample_260	= V556,
+         Last300ThicknessSample_261	= V557,
+         Last300ThicknessSample_262	= V558,
+         Last300ThicknessSample_263	= V559,
+         Last300ThicknessSample_264	= V560,
+         Last300ThicknessSample_265	= V561,
+         Last300ThicknessSample_266	= V562,
+         Last300ThicknessSample_267	= V563,
+         Last300ThicknessSample_268	= V564,
+         Last300ThicknessSample_269	= V565,
+         Last300ThicknessSample_270	= V566,
+         Last300ThicknessSample_271	= V567,
+         Last300ThicknessSample_272	= V568,
+         Last300ThicknessSample_273	= V569,
+         Last300ThicknessSample_274	= V570,
+         Last300ThicknessSample_275	= V571,
+         Last300ThicknessSample_276	= V572,
+         Last300ThicknessSample_277	= V573,
+         Last300ThicknessSample_278	= V574,
+         Last300ThicknessSample_279	= V575,
+         Last300ThicknessSample_280	= V576,
+         Last300ThicknessSample_281	= V577,
+         Last300ThicknessSample_282	= V578,
+         Last300ThicknessSample_283	= V579,
+         Last300ThicknessSample_284	= V580,
+         Last300ThicknessSample_285	= V581,
+         Last300ThicknessSample_286	= V582,
+         Last300ThicknessSample_287	= V583,
+         Last300ThicknessSample_288	= V584,
+         Last300ThicknessSample_289	= V585,
+         Last300ThicknessSample_290	= V586,
+         Last300ThicknessSample_291	= V587,
+         Last300ThicknessSample_292	= V588,
+         Last300ThicknessSample_293	= V589,
+         Last300ThicknessSample_294	= V590,
+         Last300ThicknessSample_295	= V591,
+         Last300ThicknessSample_296	= V592,
+         Last300ThicknessSample_297	= V593,
+         Last300ThicknessSample_298	= V594,
+         Last300ThicknessSample_299	= V595,
+         Last300ThicknessSample_300	= V596) %>%
+  select(IsMeasurementRunning, Timestamp, MeanCoatingThickeness1, MeanCoatingVariability1, MeanHomogeneity1, MeanSurfaceRoughness1, MeanCoatingThickness_outlierRemoved_, CoatingThicknessPosition_1, MeanCoatingThickeness2, MeanCoatingVariability2, MeanHomogeneity2, MeanSurfaceRoughness2, MeanLast300SamplesThickness, StdLast300SamplesThickness, Last300ThicknessSample_1:Last300ThicknessSample_300)
+
+
+
+#Removing unwanted rows
+newdf <- newdf[-2, ]
+rownames(newdf) <- NULL
+
+df_na = newdf
+
+df_na[df_na == ""] <- NA
+df_na[df_na == "x"] <- NA 
+
+
+df_na[1,2] <- "DateTime"
+
+shift <- function(x, n){
+  c(x[-(seq(n))], rep(NA, n))
+}
+df_na$Timestamp <- shift(df_na$Timestamp, 1)
+
+df_na[1, ] <- lapply(df_na, as.character)
+
+df_na[1,2] <- "DateTime"
+df_na[1,6] <- "Î¼m"
+df_na[1,12] <- "Î¼m"
+df_na[1, 13:314] <- "Î¼m"
+
+df_na1 = df_na %>% drop_na()
+
+cleanData = df_na1
+
+cleanData <- cleanData[-1, ]
+rownames(cleanData) <- NULL
+
+df_zero <- cleanData[apply(cleanData!=0, 1, all) ,]
+
+#Export to CSV file
+
+write.csv(df_zero, "CleanData.csv", row.names=FALSE)
+#####
+
+rm(list = ls())
+graphics.off()
+
+
+file_name <- read_csv(file.choose(), col_types = cols(Timestamp = col_datetime(format = "%d/%m/%Y %H:%M:%S"))) 
+
+
+###### Data Visualisation #####
+
+
+df = file_name
+
+library(mclust)
+library(ggplot2)
+library(MASS)
+library(factoextra)
+library(gapminder)
+library(lubridate)
+library(dplyr)
+library(hms)
+
+
+#####
+
+MeanCoatingThickeness1:Last300ThicknessSample_300
+
+df <- df[-1, ]
+rownames(df) <- NULL
+
+df <- df[apply(df!=0, 1, all) ,]
+
+df1 = df %>% 
+  mutate(across(MeanCoatingThickeness1:Last300ThicknessSample_300, as.numeric)) 
+
+
+######
+coalesce_by_column <- function(df) {
+  return(dplyr::coalesce(!!! as.list(df)))
+}
+
+newdf = df %>%
+  group_by(Timestamp) %>%
+  summarise(across(everything(),coalesce_by_column))
+
+df_time = filter(newdf, as_hms(Timestamp) < as.hms('19:00:00'))
+
+##df1 <- df1 %>% 
+ ## mutate(Timestamp = dmy_h(Timestamp))
+#######
+
+IsMeasurementRunning <- newdf$IsMeasurementRunning
+
+DateTime <- df_time$Timestamp
+
+df_na[1, ] <- lapply(df_na, as.character)
+
+MeanThickness = df_time$MeanLast300SamplesThickness
+MeanThickness = df1 %>% select_if(is.numeric)
+
+
+MeanThickness = data.frame()
+MeanThickness1 = df_time %>% select_at(15:314)
+
+#as.matrix(MeanThickness1)
+#MeanThickness2 = mean(as.matrix(MeanThickness1))
+
+#MeanThickness3 = MeanThickness1 %>%
+ # rowwise() %>%mutate(MeanThickness= mean(c(15:314)))
+
+#Test2 = MeanThickness1 %>%
+ # group_by(DateTime) %>%
+  #summarise(across(everything(),coalesce_by_column))
+
+StdThickness <- newdf$MeanLast300SamplesThickness
+
+Test1 <- data.frame(MeanThickness, DateTime)
+
+Test3 <- data.frame(IsMeasurementRunning, MeanThickness1)
+
+Test2 = Test1 %>%
+  group_by(DateTime) %>%
+  summarise(mean_thickness = mean(MeanThickness1, na.rm = TRUE), .groups = 'drop')
+
+######
+
+
+
+######
+
+y = MeanThickness
+
+
+mode <- function(y) {
+  return(as.numeric(names(which.max(table(y)))))
+}
+
+mode(y)
+
+barplot(table(y), col = c(4, rep("gray",4)))
+
+####
+
+plot(Test1$DateTime, Test1$MeanThickness)
+
+dev.new(width = 12, height = 9, unit = "in")
+plt <- ggplot() + geom_point(data = newdf,aes(x=Timestamp,y=MeanLast300SamplesThickness))+geom_point(data=df1,aes(x=Timestamp,y=MeanLast300SamplesThickness),size=4,color='coral2')+
+  theme_bw()+xlab("DateTime (hr)")+ylab("Film Thickness (microns)")+scale_y_continuous(breaks=seq(0,140,10))+ scale_x_continuous(breaks=seq(0,140,10))+theme(legend.position="none")
+plt
+
+gmm_model <- Mclust(Test1) 
+pred = predict(gmm_model)$classification
+plot(newdf, col = pred, main = "GMM Clustering Results")
+dev.off()
+
+dev.new(width = 20, height = 10, unit = "in")
+plt <- ggplot(Test3, aes(x=MeanThickness1, y=MeanThickness1)) + geom_point(data = newdf,aes(x=Timestamp,y=MeanLast300SamplesThickness)) + geom_point(data=df1,aes(x=Timestamp,y=MeanLast300SamplesThickness),size=4,color='coral2')
+plt
+
+
+dev.new(width = 20, height = 10, unit = "in")
+plt <- ggplot(Test1, aes(x=DateTime, y=MeanThickness1, label=sprintf("%0.5f", round(MeanThickness, digits = 2)))) + geom_point() + geom_text(size = 4, hjust = 1.2)
+plt
+
+ggplot(Test1, aes(x = DateTime, y = MeanThickness, color='coral2')) +
+  geom_point() +
+  geom_line() + 
+  theme(axis.text.x = element_text(angle = 90))
+
+nc = Mclust(Test2)
+plot(nc)
+
+summary(nc)
+
+set.seed()
+
+data("iris")
+
+
+####
+
+
+
+ui <- tabItem(tabName = "models2",
+              fluidPage(
+                fluidRow(
+                  column(6, infoBoxOutput("overview"))),
+                fluidRow(
+                  column(6, selectInput(inputId = "x", label = "X Axis", choices = names(df), selected = "Timestamp"),
+                         selectInput(inputId = "y", label = "Y Axis", choices = names(df), selected = "MeanCoatingThickeness1"),
+                  )),
+                fluidRow(
+                  column(6, actionButton("result1","Generate Result"),
+                         screenshotButton(label = "Capture entire page"),
+                         actionButton('screenshot2','Capture plot'),
+                         downloadButton('downloadPlot','Download Plot'),
+                         plotOutput("analysis")
+                  ))
+              ))
+
+
+
